@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>DCC104 - Exemplo 01</title>
+    <script src="Sprite.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <h1>DCC104 - Exemplo 01</h1>
+    <canvas></canvas>
+    <script>
+      var eCanvas = document.getElementsByTagName("canvas")[0];
+      var ctx = eCanvas.getContext("2d");
+      var fps = 120;
+      var atual = new Date();
+      var anterior = new Date();
+      var dt = 1/fps;
+      var azul = new Sprite();
+      azul.color = "blue";
+      var fuel = 200;
+      var acelerandoX = false;
+      var acelerandoY = false;
+
+      desenha();
+      function desenha(){
+        requestAnimationFrame(desenha);
+        atual = new Date();
+        dt = (atual - anterior)/1000;
+        ctx.clearRect(0,0,eCanvas.width, eCanvas.height)
+        ctx.strokeRect(0,0,eCanvas.width, eCanvas.height)
+        ctx.fillStyle = "darkgreen";
+        ctx.fillText("dt: "+dt+" fps:"+Math.floor(1/dt), 10, 10);
+
+        if (fuel <=40)
+          ctx.fillStyle = "red";
+        else if(fuel <=150)
+          ctx.fillStyle = "yellow";
+        else {
+          ctx.fillStyle = "green";
+        }
+
+
+
+
+        ctx.fillRect(20,20, fuel, 5);
+        ctx.strokeRect(20,20, fuel, 5);
+
+        ctx.fillStyle = "black";
+        ctx.fillRect(247,100, 15, 5);
+        ctx.strokeRect(247,100, 15, 5);
+
+        ctx.fillStyle = "black";
+        var black = new Sprite();
+        black.color = "black";
+        black.x = 247;
+        black.y = 85;
+        //black.desenhar(ctx);
+        //ctx.fillRect(247, 85, 15, 15);
+        //ctx.strokeRect(247, 85, 15, 15);
+
+        if(acelerandoX && fuel>0){
+          fuel = fuel - 5*dt;
+        }
+        if(acelerandoY && fuel>0){
+          fuel = fuel - 15*dt;
+        }
+        azul.mover(dt);
+
+        azul.desenhar(ctx);
+
+        if((azul.y>150)||(azul.x>300)){
+          azul.y = 0;
+          azul.vy = 0;
+          azul.ay = 0;
+          azul.x = 0;
+          azul.vx = 0;
+          azul.ax = 0;
+
+          fuel = 200;
+        }
+        var limiteLeftX = 247-2;
+        var limiteRightX = 247+2;
+        var limiteUpY = 85-2;
+        var limiteDownY = 85+2;
+
+        //ctx.strokeRect(limiteLeftX,limiteUpY, 20, 20);
+
+        if( (azul.x > limiteLeftX) && (azul.x < limiteRightX) && (azul.y > limiteUpY) && (azul.y < limiteDownY))
+        {
+          alert("won!");
+        }
+        if((azul.y > limiteUpY) && (azul.y < limiteDownY)&&(azul.x > limiteLeftX-15) && (azul.x < limiteRightX+15))
+        {
+          azul.vy = 0;
+          azul.ay = 0;
+        }
+
+        anterior = atual;
+      }
+      addEventListener("keydown", function(e){
+        if(fuel<=0) return;
+        switch (e.keyCode) {
+
+          case 37:
+            azul.ax = -100;
+            acelerandoX = true;
+            break;
+          case 38:
+            azul.ay = -100;
+            acelerandoY = true;
+            break;
+          case 39:
+            azul.ax = +100;
+            acelerandoX = true;
+            break;
+          case 40:
+            azul.ay = +100;
+            acelerandoY = true;
+            break;
+          default:
+        }
+      });
+      addEventListener("keyup", function(e){
+        switch (e.keyCode) {
+          case 37:
+            azul.ax = 0;
+            acelerandoX = false;
+            break;
+          case 38:
+            azul.ay = 0;
+            acelerandoY = false;
+            break;
+          case 39:
+            azul.ax = 0;
+            acelerandoX = false;
+            break;
+          case 40:
+            azul.ay = 0;
+            acelerandoY = false;
+            break;
+          default:
+        }
+      });
+    </script>
+  </body>
+
+
+
+
+</html>
